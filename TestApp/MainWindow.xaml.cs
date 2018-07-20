@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -24,45 +25,92 @@ namespace TestApp
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window , INotifyPropertyChanged
+	public partial class MainWindow : Window
 	{
+		public SVNTest SvnTest { get; set; } = new SVNTest();
+
+		public MainWindow()
+		{
+			InitializeComponent();
+			this.DataContext = SvnTest;
+		}
+
+		private void RefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			ListView.AlternationCount = 1;
+			SvnTest.RefreshLog();
+		}
+	}
+
+	public class SVNLogData
+	{
+		public string Message { get; set; }
+		public long Revision { get; set; } = -1;
+	}
+
+	// ReSharper disable once InconsistentNaming
+	public class SVNTest : INotifyPropertyChanged
+	{
+		public event PropertyChangedEventHandler PropertyChanged;
+
 		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		public List<string> LogMessages
+		public ObservableCollection<SVNLogData> LogDataCollection
 		{
 			get
 			{
-				return m_logMessages;
+				return m_logDataCollection;
 			}
 			set
 			{
-				m_logMessages = value;
-				OnPropertyChanged();
-			}
-		} 
-		private List<string> m_logMessages = new List<string>();
-
-		public MainWindow()
-		{
-
-			InitializeComponent();
-
-			using (SvnClient client = new SvnClient())
-			{
-
-				SvnUriTarget target = new SvnUriTarget(System.IO.Path.GetFullPath("D:/school/programmen/WPFTest/SVNServer"));
-
-				SvnLogArgs args = new SvnLogArgs();
-				args.Start = 0;
-				args.Limit = 100;
-				client.Log("D:\\school\\programmen\\WPFTest\\SVNCheckout", (a, b) => { LogMessages.Add(b.LogMessage); OnPropertyChanged(nameof(LogMessages)); });
+				m_logDataCollection = value;
+				RaisePropertyChanged();
 			}
 		}
+		private ObservableCollection<SVNLogData> m_logDataCollection = new ObservableCollection<SVNLogData>();
+
+		private SvnClient client = new SvnClient();
+
+		public SVNTest()
+		{
+			RefreshLog();
+		}
+
+		public void RefreshLog()
+		{
+			LogDataCollection.Clear();
+
+			SvnUriTarget target = new SvnUriTarget(System.IO.Path.GetFullPath("D:/school/programmen/WPFTest/SVNServer"));
+
+			SvnLogArgs args = new SvnLogArgs();
+			args.Start = 0;
+			args.Limit = 100;
+			client.Log("D:\\school\\programmen\\WPFTest\\SVNCheckout", (a, b) =>
+			{
+				var logData = new SVNLogData()
+				{
+					Message = b.LogMessage,
+					Revision = b.Revision
+				};
+
+				if (logData.Revision == 0)
+				{
+					logData.Message = "<initial commit>";
+				}
+
+				LogDataCollection.Add(logData);
+				RaisePropertyChanged(nameof(LogDataCollection));
+			});
+		}
+
+		~SVNTest()
+		{
+			client.Dispose();
+		}
+
 	}
 }

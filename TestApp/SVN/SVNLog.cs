@@ -45,7 +45,17 @@ namespace TestApp.SVN
 
 	    private SvnClient client = new SvnClient();
 
-	    public SVNLog()
+	    public string Path
+	    {
+		    get { return m_path;}
+		    set { m_path = value;
+			    RefreshLog();
+		    }
+	    } 
+	    private string m_path = @"D:/school/programmen/WPFTest/SVNCheckout";
+
+
+		public SVNLog()
 	    {
 		    RefreshLog();
 	    }
@@ -59,14 +69,27 @@ namespace TestApp.SVN
 		    SvnLogArgs args = new SvnLogArgs();
 		    args.Start = 0;
 		    args.Limit = 100;
-		    client.Log("D:\\school\\programmen\\WPFTest\\SVNCheckout\\Changed File.txt", (a, b) =>
+
+		    Collection<SvnStatusEventArgs> svnStatusList;
+		    client.GetStatus(Path, out svnStatusList);
+
+		    if (svnStatusList.Count != 0)
+		    {
+			    if (Path == svnStatusList[0].Path && svnStatusList[0].LocalNodeStatus == SvnStatus.NotVersioned)
+			    {
+				    return;
+			    }
+
+		    }
+
+		    client.Log(Path, (a, b) =>
 		    {
 			    var logData = new SVNLogData()
 			    {
 				    Message = b.LogMessage,
 				    Revision = b.Revision,
 				    Time = b.Time
-				};
+			    };
 
 			    if (logData.Revision == 0 && string.IsNullOrEmpty(logData.Message))
 			    {

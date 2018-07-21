@@ -62,6 +62,7 @@
     <Compile Include="FileBrowser.xaml.cs">
       <DependentUpon>FileBrowser.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="SVN\SVNLog.cs" />
     <Page Include="FileBrowser.xaml">
       <SubType>Designer</SubType>

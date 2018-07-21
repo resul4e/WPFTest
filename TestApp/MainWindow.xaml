@@ -11,7 +11,7 @@
 		<local:CConverter x:Key="CConverter"></local:CConverter>
 	</Window.Resources>
 
-	<StackPanel>
+	<!--<StackPanel>
 		<Button Content="Next Window" Click="NextWindow_Click"></Button>
 		<TextBlock Background="Green">Hello World</TextBlock>
 		<TextBlock Text="{Binding LogDataCollection.Count}"></TextBlock>
@@ -51,6 +51,6 @@
 			</ListView.View>
 		</ListView>
 		<Button Height="32" Content="Refresh" Click="RefreshButton_Click"></Button>
-	</StackPanel>
+	</StackPanel>-->
 </Window>
 

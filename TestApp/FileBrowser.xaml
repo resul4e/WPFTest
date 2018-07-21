@@ -9,12 +9,56 @@
       Title="FileBrowser">
 
 	<Grid>
-		<TreeView Name="trvMenu">
+		
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+
+		<TreeView Grid.Column="0" TreeViewItem.Expanded="trvMenuItem_Expanded" SelectedItemChanged="trvMenu_SelectionChanged"  Name="trvMenu">
 			<TreeView.ItemTemplate>
 				<HierarchicalDataTemplate DataType="{x:Type local:MenuItem}" ItemsSource="{Binding Items}">
 					<TextBlock Text="{Binding Title}" />
 				</HierarchicalDataTemplate>
 			</TreeView.ItemTemplate>
 		</TreeView>
+
+		<StackPanel Grid.Column="1">
+			<ListView Height="200" ItemsSource="{Binding LogDataCollection}" x:Name="ListView" AlternationCount="2">
+				<ListView.ItemContainerStyle>
+					<Style TargetType="ListViewItem">
+						<Style.Triggers>
+							<Trigger Property="ItemsControl.AlternationIndex" Value="0">
+								<Setter Property="Background" 
+								        Value="#FFE0E0E0"/>
+							</Trigger>
+							<Trigger Property="ItemsControl.AlternationIndex" Value="1">
+								<Setter Property="Background" 
+								        Value="White"></Setter>
+							</Trigger>
+						</Style.Triggers>
+					</Style>
+				</ListView.ItemContainerStyle>
+				<ListView.View>
+					<GridView>
+						<GridViewColumn Header="Revision">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Revision}"  MinWidth="10"></TextBlock>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Header="Message">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock MinWidth="20" Text="{Binding Message}" TextTrimming="CharacterEllipsis"></TextBlock>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Header="Time" DisplayMemberBinding="{Binding Time}"></GridViewColumn>
+					</GridView>
+				</ListView.View>
+			</ListView>
+		</StackPanel>
 	</Grid>
 </Page>

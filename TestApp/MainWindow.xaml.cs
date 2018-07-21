@@ -53,6 +53,7 @@ namespace TestApp
 		{
 			FileBrowser = new FileBrowser();
 			this.Content = FileBrowser;
+			FileBrowser.MainWindow = this;
 		}
 	}
 

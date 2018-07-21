@@ -6,8 +6,13 @@
         xmlns:local="clr-namespace:TestApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="375" Width="500">
+
+	<Window.Resources>
+		<local:CConverter x:Key="CConverter"></local:CConverter>
+	</Window.Resources>
+
 	<StackPanel>
-		
+		<Button Content="Next Window" Click="NextWindow_Click"></Button>
 		<TextBlock Background="Green">Hello World</TextBlock>
 		<TextBlock Text="{Binding LogDataCollection.Count}"></TextBlock>
 		<ListView Height="200" ItemsSource="{Binding LogDataCollection}" x:Name="ListView" AlternationCount="2">
@@ -16,7 +21,7 @@
 					<Style.Triggers>
 						<Trigger Property="ItemsControl.AlternationIndex" Value="0">
 							<Setter Property="Background" 
-							        Value="LightSlateGray"/>
+							        Value="#FFE0E0E0"/>
 						</Trigger>
 						<Trigger Property="ItemsControl.AlternationIndex" Value="1">
 							<Setter Property="Background" 
@@ -30,17 +35,18 @@
 					<GridViewColumn Header="Revision">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
-								<TextBlock Text="{Binding Revision}"  MinWidth="10" HorizontalAlignment="Right"></TextBlock>
+								<TextBlock Text="{Binding Revision}"  MinWidth="10"></TextBlock>
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>
-					<GridViewColumn>
+					<GridViewColumn Header="Message">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
 								<TextBlock MinWidth="20" Text="{Binding Message}" TextTrimming="CharacterEllipsis"></TextBlock>
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>
+					<GridViewColumn Header="Time" DisplayMemberBinding="{Binding Time, Converter={StaticResource CConverter}}"></GridViewColumn>
 				</GridView>
 			</ListView.View>
 		</ListView>

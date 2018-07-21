@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ using SharpSvn;
 using System.IO;
 using System.Runtime.CompilerServices;
 using TestApp.Annotations;
+using TestApp.SVN;
 
 namespace TestApp
 {
@@ -27,90 +29,46 @@ namespace TestApp
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public SVNTest SvnTest { get; set; } = new SVNTest();
+		public SVNLog SvnLog { get; set; } = new SVNLog();
+		public FileBrowser FileBrowser { get; set; }
 
 		public MainWindow()
 		{
 			InitializeComponent();
-			this.DataContext = SvnTest;
+			this.DataContext = SvnLog;
+			GoToFileBrowser();
 		}
 
 		private void RefreshButton_Click(object sender, RoutedEventArgs e)
 		{
-			ListView.AlternationCount = 1;
-			SvnTest.RefreshLog();
+			SvnLog.RefreshLog();
+		}
+
+		private void NextWindow_Click(object sender, RoutedEventArgs e)
+		{
+			GoToFileBrowser();
+		}
+
+		private void GoToFileBrowser()
+		{
+			FileBrowser = new FileBrowser();
+			this.Content = FileBrowser;
 		}
 	}
 
-	public class SVNLogData
+	
+	public class CConverter : IValueConverter
 	{
-		public string Message { get; set; }
-		public long Revision { get; set; } = -1;
-	}
-
-	// ReSharper disable once InconsistentNaming
-	public class SVNTest : INotifyPropertyChanged
-	{
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		[NotifyPropertyChangedInvocator]
-		protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			var dateTime = (DateTime)value;
+			
+			return dateTime.GetDateTimeFormats()[90];
 		}
 
-		public ObservableCollection<SVNLogData> LogDataCollection
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			get
-			{
-				return m_logDataCollection;
-			}
-			set
-			{
-				m_logDataCollection = value;
-				RaisePropertyChanged();
-			}
+			throw new NotImplementedException();
 		}
-		private ObservableCollection<SVNLogData> m_logDataCollection = new ObservableCollection<SVNLogData>();
-
-		private SvnClient client = new SvnClient();
-
-		public SVNTest()
-		{
-			RefreshLog();
-		}
-
-		public void RefreshLog()
-		{
-			LogDataCollection.Clear();
-
-			SvnUriTarget target = new SvnUriTarget(System.IO.Path.GetFullPath("D:/school/programmen/WPFTest/SVNServer"));
-
-			SvnLogArgs args = new SvnLogArgs();
-			args.Start = 0;
-			args.Limit = 100;
-			client.Log("D:\\school\\programmen\\WPFTest\\SVNCheckout", (a, b) =>
-			{
-				var logData = new SVNLogData()
-				{
-					Message = b.LogMessage,
-					Revision = b.Revision
-				};
-
-				if (logData.Revision == 0)
-				{
-					logData.Message = "<initial commit>";
-				}
-
-				LogDataCollection.Add(logData);
-				RaisePropertyChanged(nameof(LogDataCollection));
-			});
-		}
-
-		~SVNTest()
-		{
-			client.Dispose();
-		}
-
 	}
 }

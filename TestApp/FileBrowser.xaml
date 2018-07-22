@@ -4,18 +4,38 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:TestApp"
+      xmlns:converter="clr-namespace:TestApp.Converter"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="FileBrowser">
 
+	<Page.Resources>
+		<converter:DateTimeToStringConverter x:Key="DateTimeToString"/>
+		<converter:StringToOnelineStringConverter x:Key="StringToOneline"/>
+	</Page.Resources>
+
 	<Grid>
-		
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="20"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
+		
+		<StackPanel Orientation="Horizontal">
+			<Menu>
+				<MenuItem Header="_File"/>
+				<MenuItem Header="_File"/>
+				<MenuItem Header="_File"/>
+				<MenuItem Header="_File"/>
+			</Menu>
+		</StackPanel>
 
-		<TreeView Grid.Column="0" TreeViewItem.Expanded="trvMenuItem_Expanded" SelectedItemChanged="trvMenu_SelectionChanged"  Name="trvMenu">
+		<TreeView Grid.Row="1" Grid.Column="0" TreeViewItem.Expanded="trvMenuItem_Expanded" SelectedItemChanged="trvMenu_SelectionChanged"  Name="trvMenu">
 			<TreeView.ItemTemplate>
 				<HierarchicalDataTemplate DataType="{x:Type local:MenuItem}" ItemsSource="{Binding Items}">
 					<TextBlock Text="{Binding Title}" />
@@ -23,8 +43,14 @@
 			</TreeView.ItemTemplate>
 		</TreeView>
 
-		<StackPanel Grid.Column="1">
-			<ListView Height="200" ItemsSource="{Binding LogDataCollection}" x:Name="ListView" AlternationCount="2">
+		<Grid Grid.Row="1" Grid.Column="1">
+			
+			<Grid.RowDefinitions>
+				<RowDefinition Height="2*"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+
+			<ListView Grid.Row="0" MinHeight="150" ItemsSource="{Binding LogDataCollection}" x:Name="ListView" AlternationCount="2">
 				<ListView.ItemContainerStyle>
 					<Style TargetType="ListViewItem">
 						<Style.Triggers>
@@ -41,24 +67,28 @@
 				</ListView.ItemContainerStyle>
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="Revision">
+						<GridViewColumn Header="Revision" >
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding Revision}"  MinWidth="10"></TextBlock>
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="Message">
+						<GridViewColumn Header="Message" Width="200">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
-									<TextBlock MinWidth="20" Text="{Binding Message}" TextTrimming="CharacterEllipsis"></TextBlock>
+									<TextBlock MaxWidth="400" MinWidth="20" TextWrapping="NoWrap" Text="{Binding Message, Converter={StaticResource StringToOneline}}" TextTrimming="CharacterEllipsis"></TextBlock>
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="Time" DisplayMemberBinding="{Binding Time}"></GridViewColumn>
+						<GridViewColumn Header="Time" DisplayMemberBinding="{Binding Time, Converter={StaticResource DateTimeToString}}"></GridViewColumn>
 					</GridView>
 				</ListView.View>
 			</ListView>
-		</StackPanel>
+			<StackPanel Grid.Row="1">
+				<TextBlock Text="{Binding ElementName=ListView, Path=SelectedItem.Message}" TextWrapping="Wrap"></TextBlock>
+			</StackPanel>
+		</Grid>
 	</Grid>
 </Page>
+

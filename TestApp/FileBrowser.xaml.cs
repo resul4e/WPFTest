@@ -29,13 +29,15 @@ namespace TestApp
 	    public MenuItem Root { get; set; }
 		public MainWindow MainWindow { get; set; }
 
-        public FileBrowser()
+        public FileBrowser(MainWindow _parentWindow)
         {
+	        MainWindow = _parentWindow;
+
             InitializeComponent();
 
 			//initialize the root folder of the repo
-	        Root = new MenuItem() { Title = "SVNCheckout", Path = "D:\\school\\programmen\\WPFTest\\SVNCheckout\\" };
-	        Root.Items.Add(new MenuItem() { Title = "{Dummy}", Path = "D:\\school\\programmen\\WPFTest\\SVNCheckout\\" });
+	        Root = new MenuItem() { Title = "SVNCheckout", Path = MainWindow.SVNCheckoutPath };
+	        Root.Items.Add(new MenuItem() { Title = "{Dummy}", Path = MainWindow.SVNCheckoutPath });
 	        trvMenu.Items.Add(Root);
         }
 

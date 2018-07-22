@@ -29,11 +29,18 @@ namespace TestApp
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public SVNLog SvnLog { get; set; } = new SVNLog();
+		public SVNLog SvnLog { get; set; }
 		public FileBrowser FileBrowser { get; set; }
+		public string SVNServerPath { get; private set; }
+		public string SVNCheckoutPath { get; private set; }
 
 		public MainWindow()
 		{
+			SVNServerPath = @"D:\school\programmen\WPFTest\SVNServer";
+			SVNCheckoutPath = @"D:\school\programmen\WPFTest\SVNCheckout";
+
+			SvnLog = new SVNLog(this);
+
 			InitializeComponent();
 			this.DataContext = SvnLog;
 			GoToFileBrowser();
@@ -51,25 +58,9 @@ namespace TestApp
 
 		private void GoToFileBrowser()
 		{
-			FileBrowser = new FileBrowser();
-			this.Content = FileBrowser;
+			FileBrowser = new FileBrowser(this);
+			Content = FileBrowser;
 			FileBrowser.MainWindow = this;
-		}
-	}
-
-	
-	public class CConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			var dateTime = (DateTime)value;
-			
-			return dateTime.GetDateTimeFormats()[90];
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

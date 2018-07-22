@@ -22,6 +22,7 @@ namespace TestApp.SVN
 	public class SVNLog : INotifyPropertyChanged
     {
 	    public event PropertyChangedEventHandler PropertyChanged;
+	    public MainWindow MainWindow;
 
 	    [NotifyPropertyChangedInvocator]
 	    protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
@@ -51,23 +52,29 @@ namespace TestApp.SVN
 		    set { m_path = value;
 			    RefreshLog();
 		    }
-	    } 
-	    private string m_path = @"D:/school/programmen/WPFTest/SVNCheckout";
+	    }
+	    private string m_path = null;
 
 
-		public SVNLog()
-	    {
-		    RefreshLog();
+		public SVNLog(MainWindow _parentWindow)
+		{
+			MainWindow = _parentWindow;
+			Path = MainWindow.SVNCheckoutPath;
+
+			RefreshLog();
 	    }
 
+		/// <summary>
+		/// Refreshes the log, taking in account the path currently set.
+		/// </summary>
 	    public void RefreshLog()
 	    {
 		    LogDataCollection.Clear();
 
-		    SvnUriTarget target = new SvnUriTarget(System.IO.Path.GetFullPath("D:/school/programmen/WPFTest/SVNServer"));
+		    SvnUriTarget target = new SvnUriTarget("https://svn.nhtv.nl/repos/student.130134.Resul_School/");
 
 		    SvnLogArgs args = new SvnLogArgs();
-		    args.Start = 0;
+		    args.Start = args.End;
 		    args.Limit = 100;
 
 		    Collection<SvnStatusEventArgs> svnStatusList;
@@ -79,10 +86,9 @@ namespace TestApp.SVN
 			    {
 				    return;
 			    }
-
 		    }
 
-		    client.Log(Path, (a, b) =>
+		    client.Log(Path, args, (a, b) =>
 		    {
 			    var logData = new SVNLogData()
 			    {

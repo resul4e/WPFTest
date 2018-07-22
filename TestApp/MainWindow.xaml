@@ -5,52 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="375" Width="500">
-
-	<Window.Resources>
-		<local:CConverter x:Key="CConverter"></local:CConverter>
-	</Window.Resources>
-
-	<!--<StackPanel>
-		<Button Content="Next Window" Click="NextWindow_Click"></Button>
-		<TextBlock Background="Green">Hello World</TextBlock>
-		<TextBlock Text="{Binding LogDataCollection.Count}"></TextBlock>
-		<ListView Height="200" ItemsSource="{Binding LogDataCollection}" x:Name="ListView" AlternationCount="2">
-			<ListView.ItemContainerStyle>
-				<Style TargetType="ListViewItem">
-					<Style.Triggers>
-						<Trigger Property="ItemsControl.AlternationIndex" Value="0">
-							<Setter Property="Background" 
-							        Value="#FFE0E0E0"/>
-						</Trigger>
-						<Trigger Property="ItemsControl.AlternationIndex" Value="1">
-							<Setter Property="Background" 
-									Value="White"></Setter>
-						</Trigger>
-					</Style.Triggers>
-				</Style>
-			</ListView.ItemContainerStyle>
-			<ListView.View>
-				<GridView>
-					<GridViewColumn Header="Revision">
-						<GridViewColumn.CellTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding Revision}"  MinWidth="10"></TextBlock>
-							</DataTemplate>
-						</GridViewColumn.CellTemplate>
-					</GridViewColumn>
-					<GridViewColumn Header="Message">
-						<GridViewColumn.CellTemplate>
-							<DataTemplate>
-								<TextBlock MinWidth="20" Text="{Binding Message}" TextTrimming="CharacterEllipsis"></TextBlock>
-							</DataTemplate>
-						</GridViewColumn.CellTemplate>
-					</GridViewColumn>
-					<GridViewColumn Header="Time" DisplayMemberBinding="{Binding Time, Converter={StaticResource CConverter}}"></GridViewColumn>
-				</GridView>
-			</ListView.View>
-		</ListView>
-		<Button Height="32" Content="Refresh" Click="RefreshButton_Click"></Button>
-	</StackPanel>-->
+        Title="MainWindow" Height="550" Width="1080" MinWidth="600" MinHeight="400">
 </Window>
 

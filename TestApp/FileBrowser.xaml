@@ -12,6 +12,7 @@
 	<Page.Resources>
 		<converter:DateTimeToStringConverter x:Key="DateTimeToString"/>
 		<converter:StringToOnelineStringConverter x:Key="StringToOneline"/>
+		<converter:SVNStatusToIconConverter x:Key="SVNStatusToIcon"/>
 	</Page.Resources>
 
 	<Grid>
@@ -37,8 +38,11 @@
 
 		<TreeView Grid.Row="1" Grid.Column="0" TreeViewItem.Expanded="trvMenuItem_Expanded" SelectedItemChanged="trvMenu_SelectionChanged"  Name="trvMenu">
 			<TreeView.ItemTemplate>
-				<HierarchicalDataTemplate DataType="{x:Type local:MenuItem}" ItemsSource="{Binding Items}">
-					<TextBlock Text="{Binding Title}" />
+				<HierarchicalDataTemplate DataType="{x:Type local:FileBrowserData}" ItemsSource="{Binding Items}">
+					<StackPanel Orientation="Horizontal">
+						<Image Source="{Binding SvnStatus, Converter={StaticResource SVNStatusToIcon}}" Width="8" Height="8" Margin="0 4 2 2"></Image>
+					<TextBlock Text="{Binding Title}"  ToolTip="{Binding Path}"/>
+					</StackPanel>
 				</HierarchicalDataTemplate>
 			</TreeView.ItemTemplate>
 		</TreeView>

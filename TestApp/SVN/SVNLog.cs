@@ -57,6 +57,15 @@ namespace TestApp.SVN
 		    }
 	    }
 
+	    public SvnClient Client
+	    {
+		    get
+		    {
+			    return m_client;
+
+		    }
+	    }
+
 		#endregion
 
 		#region Ctor/Dtor

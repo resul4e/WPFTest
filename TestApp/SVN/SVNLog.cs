@@ -7,11 +7,15 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using SharpSvn;
 using TestApp.Annotations;
 
 namespace TestApp.SVN
 {
+	/// <summary>
+	/// Stores all of the data the UI needs to show the log
+	/// </summary>
 	public class SVNLogData
 	{
 		public string Message { get; set; }
@@ -21,16 +25,12 @@ namespace TestApp.SVN
 
 	public class SVNLog : INotifyPropertyChanged
     {
-	    public event PropertyChangedEventHandler PropertyChanged;
-	    public MainWindow MainWindow;
-
-	    [NotifyPropertyChangedInvocator]
-	    protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-	    {
-		    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-	    }
-
-	    public ObservableCollection<SVNLogData> LogDataCollection
+	    #region Public Properties
+		
+	    /// <summary>
+		/// List of SVNLogDatas that is shown in the UI
+		/// </summary>
+		public ObservableCollection<SVNLogData> LogDataCollection
 	    {
 		    get
 		    {
@@ -42,53 +42,61 @@ namespace TestApp.SVN
 			    RaisePropertyChanged();
 		    }
 	    }
-	    private ObservableCollection<SVNLogData> m_logDataCollection = new ObservableCollection<SVNLogData>();
 
-	    private SvnClient client = new SvnClient();
-
-	    public string Path
-	    {
+		/// <summary>
+		/// Root folder where all of the svn files are located
+		/// </summary>
+	    public string SvnCheckoutPath
+		{
 		    get { return m_path;}
 		    set { m_path = value;
 			    RefreshLog();
 		    }
 	    }
-	    private string m_path = null;
 
+		#endregion
 
-		public SVNLog(MainWindow _parentWindow)
+		#region Ctor/Dtor
+
+		/// <summary>
+		/// Populate path and refresh log
+		/// </summary>
+		public SVNLog()
 		{
-			MainWindow = _parentWindow;
-			Path = MainWindow.SVNCheckoutPath;
+			SvnCheckoutPath = ((MainWindow)Application.Current.MainWindow)?.SvnCheckoutPath;
 
 			RefreshLog();
+		}
+
+	    ~SVNLog()
+	    {
+		    m_client.Dispose();
 	    }
+
+		#endregion
 
 		/// <summary>
 		/// Refreshes the log, taking in account the path currently set.
 		/// </summary>
-	    public void RefreshLog()
+		public void RefreshLog()
 	    {
 		    LogDataCollection.Clear();
-
-		    SvnUriTarget target = new SvnUriTarget("https://svn.nhtv.nl/repos/student.130134.Resul_School/");
 
 		    SvnLogArgs args = new SvnLogArgs();
 		    args.Start = args.End;
 		    args.Limit = 100;
 
-		    Collection<SvnStatusEventArgs> svnStatusList;
-		    client.GetStatus(Path, out svnStatusList);
+		    m_client.GetStatus(SvnCheckoutPath, out Collection<SvnStatusEventArgs> svnStatusList);
 
 		    if (svnStatusList.Count != 0)
 		    {
-			    if (Path == svnStatusList[0].Path && svnStatusList[0].LocalNodeStatus == SvnStatus.NotVersioned)
+			    if (SvnCheckoutPath == svnStatusList[0].Path && svnStatusList[0].LocalNodeStatus == SvnStatus.NotVersioned)
 			    {
 				    return;
 			    }
 		    }
 
-		    client.Log(Path, args, (a, b) =>
+		    m_client.Log(SvnCheckoutPath, args, (a, b) =>
 		    {
 			    var logData = new SVNLogData()
 			    {
@@ -107,9 +115,24 @@ namespace TestApp.SVN
 		    });
 	    }
 
-	    ~SVNLog()
+		#region IPropertyChanged
+
+	    public event PropertyChangedEventHandler PropertyChanged;
+
+	    [NotifyPropertyChangedInvocator]
+	    protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
 	    {
-		    client.Dispose();
+		    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	    }
+
+		#endregion
+
+		#region Private Properties
+
+	    private string m_path = null;
+	    private ObservableCollection<SVNLogData> m_logDataCollection = new ObservableCollection<SVNLogData>();
+	    private SvnClient m_client = new SvnClient();
+
+		#endregion
 	}
 }

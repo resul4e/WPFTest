@@ -31,36 +31,35 @@ namespace TestApp
 	{
 		public SVNLog SvnLog { get; set; }
 		public FileBrowser FileBrowser { get; set; }
-		public string SVNServerPath { get; private set; }
-		public string SVNCheckoutPath { get; private set; }
+		public string SvnServerPath { get; }
+		public string SvnCheckoutPath { get; }
 
 		public MainWindow()
 		{
-			SVNServerPath = @"D:\school\programmen\WPFTest\SVNServer";
-			SVNCheckoutPath = @"D:\school\programmen\WPFTest\SVNCheckout";
+			SvnServerPath = @"D:\school\programmen\WPFTest\SVNServer";
+			SvnCheckoutPath = @"D:\school\programmen\WPFTest\SVNCheckout";
 
-			SvnLog = new SVNLog(this);
+			SvnLog = new SVNLog();
 
 			InitializeComponent();
 			this.DataContext = SvnLog;
 			GoToFileBrowser();
 		}
 
-		private void RefreshButton_Click(object sender, RoutedEventArgs e)
+		private void RefreshButton_Click(object _sender, RoutedEventArgs _e)
 		{
 			SvnLog.RefreshLog();
 		}
 
-		private void NextWindow_Click(object sender, RoutedEventArgs e)
+		private void NextWindow_Click(object _sender, RoutedEventArgs _e)
 		{
 			GoToFileBrowser();
 		}
 
 		private void GoToFileBrowser()
 		{
-			FileBrowser = new FileBrowser(this);
+			FileBrowser = new FileBrowser();
 			Content = FileBrowser;
-			FileBrowser.MainWindow = this;
 		}
 	}
 }

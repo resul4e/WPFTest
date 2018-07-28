@@ -29,15 +29,15 @@ namespace TestApp
 	    public MenuItem Root { get; set; }
 		public MainWindow MainWindow { get; set; }
 
-        public FileBrowser(MainWindow _parentWindow)
+        public FileBrowser()
         {
-	        MainWindow = _parentWindow;
+	        MainWindow = Application.Current.MainWindow as MainWindow;
 
             InitializeComponent();
 
 			//initialize the root folder of the repo
-	        Root = new MenuItem() { Title = "SVNCheckout", Path = MainWindow.SVNCheckoutPath };
-	        Root.Items.Add(new MenuItem() { Title = "{Dummy}", Path = MainWindow.SVNCheckoutPath });
+	        Root = new MenuItem() { Title = "SVNCheckout", Path = MainWindow.SvnCheckoutPath };
+	        Root.Items.Add(new MenuItem() { Title = "{Dummy}", Path = MainWindow.SvnCheckoutPath });
 	        trvMenu.Items.Add(Root);
         }
 
@@ -106,7 +106,7 @@ namespace TestApp
 	    private void trvMenu_SelectionChanged(object _sender, RoutedPropertyChangedEventArgs<object> _e)
 	    {
 		    string path = ((MenuItem) _e.NewValue).Path;
-		    MainWindow.SvnLog.Path = path;
+		    MainWindow.SvnLog.SvnCheckoutPath = path;
 	    }
     }
 

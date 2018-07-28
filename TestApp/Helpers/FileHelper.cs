@@ -6,8 +6,17 @@ using System.Threading.Tasks;
 
 namespace TestApp.Helpers
 {
+	/// <summary>
+	/// Class with medthods related to file manipulation and information
+	/// </summary>
 	public class FileHelper
 	{
+		/// <summary>
+		/// Returns a path that is the same for each of the paths.
+		/// </summary>
+		/// <param name="_separator">The separator used to seprate directories from eachother</param>
+		/// <param name="_paths">the list of paths you want to compare</param>
+		/// <returns>A single path that is the same for each path provided</returns>
 		public static string FindCommonPath(string _separator, List<string> _paths)
 		{
 			string commonPath = String.Empty;

@@ -26,6 +26,9 @@ namespace TestApp
     /// </summary>
     public partial class FileBrowser : Page
     {
+		/// <summary>
+		/// Root folder of 
+		/// </summary>
 	    public MenuItem Root { get; set; }
 		public MainWindow MainWindow { get; set; }
 
@@ -36,15 +39,24 @@ namespace TestApp
             InitializeComponent();
 
 			//initialize the root folder of the repo
-	        Root = new MenuItem() { Title = "SVNCheckout", Path = MainWindow.SvnCheckoutPath };
-	        Root.Items.Add(new MenuItem() { Title = "{Dummy}", Path = MainWindow.SvnCheckoutPath });
+	        Root = new MenuItem() { Title = Path.GetFileNameWithoutExtension(MainWindow.SvnCheckoutPath), Path = MainWindow.SvnCheckoutPath };
+	        Root.Items.Add(new MenuItem() { Title = m_dummyName, Path = MainWindow.SvnCheckoutPath });
 	        trvMenu.Items.Add(Root);
         }
 
-		//get a list of all of the directories and files inside of the given path
-	    public List<MenuItem> GetDirectoryContent(string _path)
+		/// <summary>
+		/// Get a list of all of the directories and files inside of the given path
+		/// </summary>
+		/// <param name="_path">The DirectoryPath you want the content for.</param>
+		/// <returns>A list of MenuItems, if the menuItem is another directory it is filled with a dummy item, otherwise its content remains empty</returns>
+		public List<MenuItem> GetDirectoryContent(string _path)
 	    {
 			List<MenuItem> directoryItems = new List<MenuItem>();
+
+		    if (!Directory.Exists(_path))
+		    {
+			    return directoryItems;
+		    }
 
 		    var allDirs = System.IO.Directory.EnumerateDirectories(_path, "*",
 			    SearchOption.TopDirectoryOnly);
@@ -60,7 +72,7 @@ namespace TestApp
 			    }
 			
 				//get the folder name
-			    var commonDir = FileHelper.FindCommonPath("\\", new List<string>() { dir, _path });
+			    var commonDir = FileHelper.FindCommonPath(Path.DirectorySeparatorChar.ToString(), new List<string>() { dir, _path });
 			    var partDir = dir.Remove(0, commonDir.Length);
 			    partDir = partDir.Remove(0, 1);
 			
@@ -71,7 +83,7 @@ namespace TestApp
 				//if the map doesn't contain anything don't add the dummy file
 			    if (Directory.EnumerateFileSystemEntries(dir).Any())
 			    {
-				    newDirItem.Items.Add(new MenuItem() { Title = "{Dummy}", Path = dir });
+				    newDirItem.Items.Add(new MenuItem() { Title = m_dummyName, Path = dir });
 				}
 
 			    directoryItems.Add(newDirItem);
@@ -88,9 +100,17 @@ namespace TestApp
 			return directoryItems;
 	    }
 
-	    private void trvMenuItem_Expanded(object _sender, RoutedEventArgs _e)
+	    #region Events
+
+		private void trvMenuItem_Expanded(object _sender, RoutedEventArgs _e)
 	    {
 		    var tvi = (TreeViewItem) _e.OriginalSource;
+			//if we already populated the list we don't need to do it again.
+		    if (((MenuItem)tvi.Items[0]).Title != m_dummyName)
+		    {
+			    return;
+		    }
+
 		    var parentPath = ((MenuItem) tvi.Items[0]).Path;
 
 		    tvi.ItemsSource = null;
@@ -103,11 +123,24 @@ namespace TestApp
 			}
 	    }
 
-	    private void trvMenu_SelectionChanged(object _sender, RoutedPropertyChangedEventArgs<object> _e)
+	    private void grvHeader_Clicked(object _sender, RoutedEventArgs _e)
+	    {
+		    throw new NotImplementedException();
+	    }
+
+		private void trvMenu_SelectionChanged(object _sender, RoutedPropertyChangedEventArgs<object> _e)
 	    {
 		    string path = ((MenuItem) _e.NewValue).Path;
 		    MainWindow.SvnLog.SvnCheckoutPath = path;
 	    }
+
+	    #endregion
+
+		#region Private Properties
+
+		private string m_dummyName = "{Dummy}";
+
+	    #endregion
     }
 
 	public class MenuItem

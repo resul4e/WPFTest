@@ -67,8 +67,11 @@
 				</ListView.ItemContainerStyle>
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="Revision" >
-							<GridViewColumn.CellTemplate>
+						<GridViewColumn>
+							<GridViewColumn.Header>
+								<GridViewColumnHeader Tag="Revision" Click="grvHeader_Clicked"/>
+							</GridViewColumn.Header>
+								<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding Revision}"  MinWidth="10"></TextBlock>
 								</DataTemplate>
@@ -86,7 +89,9 @@
 				</ListView.View>
 			</ListView>
 			<StackPanel Grid.Row="1">
-				<TextBlock Text="{Binding ElementName=ListView, Path=SelectedItem.Message}" TextWrapping="Wrap"></TextBlock>
+				<ScrollViewer MaxHeight="150">
+					<TextBlock Text="{Binding ElementName=ListView, Path=SelectedItem.Message}" TextWrapping="Wrap"></TextBlock>
+				</ScrollViewer>
 			</StackPanel>
 		</Grid>
 	</Grid>

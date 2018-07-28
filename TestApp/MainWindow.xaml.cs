@@ -1,25 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using SharpSvn;
-using System.IO;
-using System.Runtime.CompilerServices;
-using TestApp.Annotations;
+﻿using System.Windows;
 using TestApp.SVN;
 
 namespace TestApp
@@ -29,10 +8,29 @@ namespace TestApp
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		#region Public Properties
+		/// <summary>
+		/// stores and retrieves svn log data.
+		/// </summary>
 		public SVNLog SvnLog { get; set; }
+		
+		/// <summary>
+		/// Holds File tree with the <see cref="SvnCheckoutPath"/> as the root.
+		/// </summary>
 		public FileBrowser FileBrowser { get; set; }
+		
+		/// <summary>
+		/// The path to the svn server.
+		/// </summary>
 		public string SvnServerPath { get; }
+
+		/// <summary>
+		/// The path to the checkout folder.
+		/// </summary>
 		public string SvnCheckoutPath { get; }
+		#endregion
+
+		#region Ctor/Dtor
 
 		public MainWindow()
 		{
@@ -45,6 +43,8 @@ namespace TestApp
 			this.DataContext = SvnLog;
 			GoToFileBrowser();
 		}
+
+		#endregion
 
 		private void RefreshButton_Click(object _sender, RoutedEventArgs _e)
 		{

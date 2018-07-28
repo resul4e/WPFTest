@@ -23,6 +23,9 @@ namespace TestApp.SVN
 		public DateTime Time { get; set; }
 	}
 
+	/// <summary>
+	/// Stores and retrieves svn log data.
+	/// </summary>
 	public class SVNLog : INotifyPropertyChanged
     {
 	    #region Public Properties
@@ -129,7 +132,7 @@ namespace TestApp.SVN
 
 		#region Private Properties
 
-	    private string m_path = null;
+	    private string m_path;
 	    private ObservableCollection<SVNLogData> m_logDataCollection = new ObservableCollection<SVNLogData>();
 	    private SvnClient m_client = new SvnClient();
 

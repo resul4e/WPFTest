@@ -1,32 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using SharpSvn;
 using TestApp.Helpers;
 using Path = System.IO.Path;
 
 namespace TestApp.FileManagement
 {
-    /// <summary>
-    /// Interaction logic for FileBrowser.xaml
-    /// </summary>
-    public partial class FileBrowser : Page
+	/// <summary>
+	/// Interaction logic for FileBrowser.xaml
+	/// </summary>
+	public partial class FileBrowser : Page
     {
 		#region Public Properties
 
@@ -135,6 +125,11 @@ namespace TestApp.FileManagement
 		private void trvMenuItem_Expanded(object _sender, RoutedEventArgs _e)
 	    {
 		    var tvi = (TreeViewItem)_e.OriginalSource;
+
+		    if (!tvi.HasItems)
+		    {
+			    return;
+		    }
 		   
 			//if we already populated the list we don't need to do it again.
 		    if (((FileBrowserData)tvi.Items[0]).Title != m_dummyName)
@@ -148,9 +143,33 @@ namespace TestApp.FileManagement
 
 		    var directories = GetDirectoryContent(parentPath);
 
-		    foreach (var dir in directories)
+		    SvnStatusArgs args = new SvnStatusArgs()
 		    {
-			    tvi.Items.Add(dir); 
+			    Depth = SvnDepth.Empty,
+			    RetrieveRemoteStatus = true,
+			    RetrieveAllEntries = true
+			};
+
+
+		    using (SvnClient client = new SvnClient())
+		    {
+
+			    foreach (var dir in directories)
+			    {
+				    client.GetStatus(dir.Path, args, out var statusList);
+
+				    if (statusList.Count != 0)
+				    {
+					    dir.SvnStatus = statusList[0].LocalNodeStatus;
+					}
+				    else
+				    {
+					    dir.SvnStatus = SvnStatus.NotVersioned;
+				    }
+
+
+					tvi.Items.Add(dir);
+			    }
 		    }
 	    }
 
@@ -181,7 +200,7 @@ namespace TestApp.FileManagement
 		private void trvMenu_SelectionChanged(object _sender, RoutedPropertyChangedEventArgs<object> _e)
 	    {
 		    string path = ((FileBrowserData) _e.NewValue).Path;
-		    MainWindow.SvnLog.SvnCheckoutPath = path;
+		    MainWindow.SvnLog.SvnSelectedPath = path;
 	    }
 
 	    #endregion
@@ -189,10 +208,10 @@ namespace TestApp.FileManagement
 		#region Private Properties
 
 		private string m_dummyName = "{Dummy}";
-		private GridViewColumnHeader m_sortedColumn = null;
-		public SortAdorner m_listViewSortAdorner { get; set; }
+		private GridViewColumnHeader m_sortedColumn;
+	    private SortAdorner m_listViewSortAdorner;
 
-		#endregion
+	    #endregion
     }
 
 	public class FileBrowserData

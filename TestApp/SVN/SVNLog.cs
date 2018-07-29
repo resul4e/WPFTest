@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.Remoting;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using SharpSvn;
 using TestApp.Annotations;
@@ -51,13 +46,26 @@ namespace TestApp.SVN
 		/// </summary>
 	    public string SvnCheckoutPath
 		{
-		    get { return m_path;}
-		    set { m_path = value;
-			    RefreshLog();
+		    get { return m_checkoutPath;}
+		    set { m_checkoutPath = value;
 		    }
 	    }
 
-	    public string SvnSelectedPath { get; set; }
+		/// <summary>
+		/// The path of the currently selected directory
+		/// </summary>
+	    public string SvnSelectedPath
+	    {
+		    get
+		    {
+			    return m_selectedPath; 
+		    }
+		    set
+		    {
+			    m_selectedPath = value;
+			    RefreshLog(); 
+		    }
+	    }
 
 		#endregion
 
@@ -148,7 +156,8 @@ namespace TestApp.SVN
 
 		#region Private Properties
 
-	    private string m_path;
+	    private string m_checkoutPath;
+	    private string m_selectedPath;
 	    private ObservableCollection<SVNLogData> m_logDataCollection = new ObservableCollection<SVNLogData>();
 
 		#endregion

@@ -26,7 +26,7 @@
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
-		
+
 		<StackPanel Orientation="Horizontal">
 			<Menu>
 				<MenuItem Header="_File"/>
@@ -36,11 +36,17 @@
 			</Menu>
 		</StackPanel>
 
-		<TreeView Grid.Row="1" Grid.Column="0" TreeViewItem.Expanded="trvMenuItem_Expanded" SelectedItemChanged="trvMenu_SelectionChanged"  Name="trvMenu">
+		<TreeView Grid.Row="1" Grid.Column="0" TreeViewItem.Expanded="trvMenuItem_Expanded"
+		          SelectedItemChanged="trvMenu_SelectionChanged" Name="trvMenu">
 			<TreeView.ItemTemplate>
 				<HierarchicalDataTemplate DataType="{x:Type local:FileBrowserData}" ItemsSource="{Binding Items}">
 					<StackPanel Orientation="Horizontal">
-						<Image Source="{Binding SvnStatus, Converter={StaticResource SVNStatusToIcon}}" Width="8" Height="8" Margin="0 4 2 2"></Image>
+						<Image Source="{Binding SvnStatus, Converter={StaticResource SVNStatusToIcon}}" 
+						       Width="10" 
+						       Height="10"
+						       Margin="0 2 2 0"
+						       >
+						</Image>
 						<TextBlock Text="{Binding Title}"  ToolTip="{Binding Path}"/>
 					</StackPanel>
 				</HierarchicalDataTemplate>
@@ -48,13 +54,14 @@
 		</TreeView>
 
 		<Grid Grid.Row="1" Grid.Column="1">
-			
+
 			<Grid.RowDefinitions>
 				<RowDefinition Height="2*"/>
 				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
 
-			<ListView Grid.Row="0" MinHeight="150" ItemsSource="{Binding LogDataCollection}" x:Name="ListView" AlternationCount="2">
+			<ListView Grid.Row="0" MinHeight="150" ItemsSource="{Binding LogDataCollection}" x:Name="ListView"
+			          AlternationCount="2" MouseRightButtonDown="GrVHeader_RightClicked">
 				<ListView.ItemContainerStyle>
 					<Style TargetType="ListViewItem">
 						<Style.Triggers>
@@ -73,11 +80,11 @@
 					<GridView>
 						<GridViewColumn>
 							<GridViewColumn.Header>
-								<GridViewColumnHeader Tag="Revision" Click="GrVHeader_Clicked" MouseRightButtonDown="GrVHeader_RightClicked">
+								<GridViewColumnHeader Tag="Revision" Click="GrVHeader_Clicked">
 									Revision
 								</GridViewColumnHeader>
 							</GridViewColumn.Header>
-								<GridViewColumn.CellTemplate>
+							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding Revision}"  MinWidth="10"></TextBlock>
 								</DataTemplate>
@@ -87,7 +94,6 @@
 							<GridViewColumn.Header>
 								<GridViewColumnHeader Tag="Message" 
 								                      Click="GrVHeader_Clicked" 
-								                      MouseRightButtonDown="GrVHeader_RightClicked" 
 								                      Content="Message"/>
 							</GridViewColumn.Header>
 							<GridViewColumn.CellTemplate>
@@ -102,7 +108,7 @@
 						</GridViewColumn>
 						<GridViewColumn DisplayMemberBinding="{Binding Time, Converter={StaticResource DateTimeToString}}">
 							<GridViewColumn.Header>
-								<GridViewColumnHeader Tag="Time" Click="GrVHeader_Clicked" MouseRightButtonDown="GrVHeader_RightClicked">Time</GridViewColumnHeader>
+								<GridViewColumnHeader Tag="Time" Click="GrVHeader_Clicked" Content="Time"/>
 							</GridViewColumn.Header>
 						</GridViewColumn>
 					</GridView>
@@ -110,7 +116,7 @@
 			</ListView>
 			<StackPanel Grid.Row="1">
 				<ScrollViewer MaxHeight="150">
-					<TextBlock Text="{Binding ElementName=ListView, Path=SelectedItem.Message}" TextWrapping="Wrap"></TextBlock>
+					<TextBlock Text="{Binding ElementName=ListView, Path=SelectedItem.Message}" TextWrapping="Wrap"/>
 				</ScrollViewer>
 			</StackPanel>
 		</Grid>

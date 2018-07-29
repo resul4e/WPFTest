@@ -4,7 +4,10 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using SharpSvn;
 
 namespace TestApp.Converter
@@ -19,36 +22,44 @@ namespace TestApp.Converter
 			}
 
 			SvnStatus status = (SvnStatus)value;
+			string imageSource = null;
 
 			switch (status)
 			{
 				case SvnStatus.Incomplete:
-					return null;
 				case SvnStatus.External:
-					return null;
 				case SvnStatus.Obstructed:
-					return null;
 				case SvnStatus.Ignored:
-					return null;
 				case SvnStatus.Conflicted:
-					return null;
 				case SvnStatus.Merged:
-					return null;
 				case SvnStatus.Modified:
-					return null;
+					imageSource = "pack://application:,,,/Media/Flaticon/pencil-edit-button.png";
+					break;
 				case SvnStatus.Replaced:
-					return null;
 				case SvnStatus.Deleted:
-					return null;
+					break;
 				case SvnStatus.Added:
-					return "Media/FontAwesome/add-square-button.png";
+					imageSource = "pack://application:,,,/Media/FontAwesome/add-square-button.png";
+					break;
 				case SvnStatus.Normal:
-					return "Media/FontAwesome/check.png";
+					imageSource = "pack://application:,,,/Media/Flaticon/checked.png";
+					break;
 				case SvnStatus.NotVersioned:
-					return "Media/FontAwesome/check-box-empty.png";
+					imageSource = "pack://application:,,,/Media/Flaticon/question.png";
+					break;
 			}
 
-			return null;
+			if(imageSource == null)
+			{
+				return null;
+			}
+
+			BitmapImage bi = new BitmapImage();
+			bi.BeginInit();
+			bi.UriSource = new Uri(imageSource, UriKind.Absolute);
+			bi.EndInit();
+
+			return bi ;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

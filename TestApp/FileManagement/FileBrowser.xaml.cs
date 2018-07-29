@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -20,30 +21,43 @@ using SharpSvn;
 using TestApp.Helpers;
 using Path = System.IO.Path;
 
-namespace TestApp
+namespace TestApp.FileManagement
 {
     /// <summary>
     /// Interaction logic for FileBrowser.xaml
     /// </summary>
     public partial class FileBrowser : Page
     {
+		#region Public Properties
+
 		/// <summary>
-		/// Root folder of 
+		/// Root folder the user has selected.
 		/// </summary>
-	    public FileBrowserData Root { get; set; }
+		public FileBrowserData Root { get; set; }
+
 		public MainWindow MainWindow { get; set; }
 
-        public FileBrowser()
-        {
-	        MainWindow = Application.Current.MainWindow as MainWindow;
+		#endregion
 
-            InitializeComponent();
+		#region Ctor
+
+		public FileBrowser()
+		{
+			MainWindow = Application.Current.MainWindow as MainWindow;
+
+			InitializeComponent();
 
 			//initialize the root folder of the repo
-	        Root = new FileBrowserData() { Title = Path.GetFileNameWithoutExtension(MainWindow.SvnCheckoutPath), Path = MainWindow.SvnCheckoutPath};
-	        Root.Items.Add(new FileBrowserData() { Title = m_dummyName, Path = MainWindow.SvnCheckoutPath });
-	        trvMenu.Items.Add(Root);
-        }
+			Root = new FileBrowserData() { Title = Path.GetFileNameWithoutExtension(MainWindow.SvnCheckoutPath), Path = MainWindow.SvnCheckoutPath };
+			Root.Items.Add(new FileBrowserData() { Title = m_dummyName, Path = MainWindow.SvnCheckoutPath });
+			trvMenu.Items.Add(Root);
+
+			m_listViewSortAdorner = new SortAdorner(ListView, System.ComponentModel.ListSortDirection.Descending);
+		}
+
+		#endregion
+
+		#region Public Methods
 
 		/// <summary>
 		/// Get a list of all of the directories and files inside of the given path
@@ -101,33 +115,68 @@ namespace TestApp
 			return directoryItems;
 	    }
 
-	    #region Events
+		#endregion
+
+		#region Private Methods
+
+		private void ResetSortAdorner()
+		{
+			if (m_sortedColumn != null)
+			{
+				AdornerLayer.GetAdornerLayer(m_sortedColumn).Remove(m_listViewSortAdorner);
+				ListView.Items.SortDescriptions.Clear();
+			}
+		}
+
+		#endregion
+
+		#region Events
 
 		private void trvMenuItem_Expanded(object _sender, RoutedEventArgs _e)
 	    {
-		    var tvi = (TreeViewItem) _e.OriginalSource;
+		    var tvi = (TreeViewItem)_e.OriginalSource;
+		   
 			//if we already populated the list we don't need to do it again.
 		    if (((FileBrowserData)tvi.Items[0]).Title != m_dummyName)
 		    {
 			    return;
 		    }
 
-		    var parentPath = ((FileBrowserData) tvi.Items[0]).Path;
+		    var parentPath = ((FileBrowserData)tvi.Items[0]).Path;
 
 		    tvi.ItemsSource = null;
 
-			var directories = GetDirectoryContent(parentPath);
+		    var directories = GetDirectoryContent(parentPath);
 
-			foreach (var dir in directories)
-			{
-				tvi.Items.Add(dir);
-			}
+		    foreach (var dir in directories)
+		    {
+			    tvi.Items.Add(dir); 
+		    }
 	    }
 
-	    private void grvHeader_Clicked(object _sender, RoutedEventArgs _e)
+	    private void GrVHeader_Clicked(object _sender, RoutedEventArgs _e)
 	    {
-		    throw new NotImplementedException();
-	    }
+			var column = (GridViewColumnHeader)_sender;
+			string sortBy = column.Tag.ToString();
+
+			ResetSortAdorner();
+
+			ListSortDirection newDir = ListSortDirection.Ascending;
+			if (m_sortedColumn == column && m_listViewSortAdorner.SortDirection == newDir)
+			{
+				newDir = ListSortDirection.Descending;
+			}
+
+			m_sortedColumn = column;
+			m_listViewSortAdorner = new SortAdorner(m_sortedColumn, newDir);
+			AdornerLayer.GetAdornerLayer(m_sortedColumn).Add(m_listViewSortAdorner);
+			ListView.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+		}
+
+		private void GrVHeader_RightClicked(object _sender, MouseButtonEventArgs _e)
+		{
+			ResetSortAdorner();
+		}
 
 		private void trvMenu_SelectionChanged(object _sender, RoutedPropertyChangedEventArgs<object> _e)
 	    {
@@ -140,8 +189,10 @@ namespace TestApp
 		#region Private Properties
 
 		private string m_dummyName = "{Dummy}";
+		private GridViewColumnHeader m_sortedColumn = null;
+		public SortAdorner m_listViewSortAdorner { get; set; }
 
-	    #endregion
+		#endregion
     }
 
 	public class FileBrowserData

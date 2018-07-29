@@ -492,6 +492,14 @@
     <Resource Include="Media\FontAwesome\zoom-in.png" />
     <Resource Include="Media\FontAwesome\zoom-out.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Media\Flaticon\checked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\Flaticon\pencil-edit-button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\Flaticon\question.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

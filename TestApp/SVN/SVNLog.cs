@@ -57,14 +57,7 @@ namespace TestApp.SVN
 		    }
 	    }
 
-	    public SvnClient Client
-	    {
-		    get
-		    {
-			    return m_client;
-
-		    }
-	    }
+	    public string SvnSelectedPath { get; set; }
 
 		#endregion
 
@@ -76,14 +69,10 @@ namespace TestApp.SVN
 		public SVNLog()
 		{
 			SvnCheckoutPath = ((MainWindow)Application.Current.MainWindow)?.SvnCheckoutPath;
+			SvnSelectedPath = SvnCheckoutPath;
 
 			RefreshLog();
 		}
-
-	    ~SVNLog()
-	    {
-		    m_client.Dispose();
-	    }
 
 		#endregion
 
@@ -92,39 +81,57 @@ namespace TestApp.SVN
 		/// </summary>
 		public void RefreshLog()
 	    {
+		    if (string.IsNullOrEmpty(SvnSelectedPath) && !string.IsNullOrEmpty(SvnCheckoutPath))
+		    {
+			    SvnSelectedPath = SvnCheckoutPath;
+
+		    }
+		    else if(string.IsNullOrEmpty(SvnCheckoutPath) && string.IsNullOrEmpty(SvnSelectedPath))
+		    {
+			    throw new Exception("Both " + nameof(SvnSelectedPath) + " and" + nameof(SvnCheckoutPath) + "are empty!");
+		    }
+
 		    LogDataCollection.Clear();
 
 		    SvnLogArgs args = new SvnLogArgs();
 		    args.Start = args.End;
 		    args.Limit = 100;
 
-		    m_client.GetStatus(SvnCheckoutPath, out Collection<SvnStatusEventArgs> svnStatusList);
 
-		    if (svnStatusList.Count != 0)
+		    using (SvnClient client = new SvnClient())
 		    {
-			    if (SvnCheckoutPath == svnStatusList[0].Path && svnStatusList[0].LocalNodeStatus == SvnStatus.NotVersioned)
+			    client.GetStatus(SvnSelectedPath, out Collection<SvnStatusEventArgs> svnStatusList);
+
+			    if (svnStatusList.Count != 0)
 			    {
-				    return;
+				    foreach (var status in svnStatusList)
+				    {
+					    if (SvnSelectedPath == status.Path && status.LocalNodeStatus == SvnStatus.NotVersioned)
+					    {
+						    return;
+					    }
+					}
+
 			    }
+
+			    client.Log(SvnSelectedPath, args, (_obj, _logArgs) =>
+			    {
+				    var logData = new SVNLogData()
+				    {
+					    Message = _logArgs.LogMessage,
+					    Revision = _logArgs.Revision,
+					    Time = _logArgs.Time
+				    };
+
+				    if (logData.Revision == 0 && string.IsNullOrEmpty(logData.Message))
+				    {
+					    logData.Message = "<initial commit>";
+				    }
+
+				    LogDataCollection.Add(logData);
+				    RaisePropertyChanged(nameof(LogDataCollection));
+			    });
 		    }
-
-		    m_client.Log(SvnCheckoutPath, args, (a, b) =>
-		    {
-			    var logData = new SVNLogData()
-			    {
-				    Message = b.LogMessage,
-				    Revision = b.Revision,
-				    Time = b.Time
-			    };
-
-			    if (logData.Revision == 0 && string.IsNullOrEmpty(logData.Message))
-			    {
-				    logData.Message = "<initial commit>";
-			    }
-
-			    LogDataCollection.Add(logData);
-			    RaisePropertyChanged(nameof(LogDataCollection));
-		    });
 	    }
 
 		#region IPropertyChanged
@@ -132,9 +139,9 @@ namespace TestApp.SVN
 	    public event PropertyChangedEventHandler PropertyChanged;
 
 	    [NotifyPropertyChangedInvocator]
-	    protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+	    protected virtual void RaisePropertyChanged([CallerMemberName] string _propertyName = null)
 	    {
-		    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(_propertyName));
 	    }
 
 		#endregion
@@ -143,7 +150,6 @@ namespace TestApp.SVN
 
 	    private string m_path;
 	    private ObservableCollection<SVNLogData> m_logDataCollection = new ObservableCollection<SVNLogData>();
-	    private SvnClient m_client = new SvnClient();
 
 		#endregion
 	}

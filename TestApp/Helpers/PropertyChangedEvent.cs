@@ -12,9 +12,9 @@ namespace TestApp
 	class PropertyChangedEvent : INotifyPropertyChanged
 	{
 		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		protected virtual void RaisePropertyChanged([CallerMemberName] string _propertyName = null)
 		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(_propertyName));
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

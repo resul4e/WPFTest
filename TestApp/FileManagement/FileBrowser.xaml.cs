@@ -42,7 +42,7 @@ namespace TestApp.FileManagement
 			Root.Items.Add(new FileBrowserData() { Title = m_dummyName, Path = MainWindow.SvnCheckoutPath });
 			trvMenu.Items.Add(Root);
 
-			m_listViewSortAdorner = new SortAdorner(ListView, System.ComponentModel.ListSortDirection.Descending);
+			m_listViewSortAdorner = new SortAdorner(ListView, ListSortDirection.Descending);
 		}
 
 		#endregion
@@ -77,7 +77,7 @@ namespace TestApp.FileManagement
 			    }
 			
 				//get the folder name
-			    var commonDir = FileHelper.FindCommonPath(Path.DirectorySeparatorChar.ToString(), new List<string>() { dir, _path });
+			    var commonDir = FileHelper.FindCommonPath(Path.DirectorySeparatorChar.ToString(), new List<string> { dir, _path });
 			    var partDir = dir.Remove(0, commonDir.Length);
 			    partDir = partDir.Remove(0, 1);
 			
@@ -153,7 +153,6 @@ namespace TestApp.FileManagement
 
 		    using (SvnClient client = new SvnClient())
 		    {
-
 			    foreach (var dir in directories)
 			    {
 				    client.GetStatus(dir.Path, args, out var statusList);
@@ -166,7 +165,6 @@ namespace TestApp.FileManagement
 				    {
 					    dir.SvnStatus = SvnStatus.NotVersioned;
 				    }
-
 
 					tvi.Items.Add(dir);
 			    }

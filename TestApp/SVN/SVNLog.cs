@@ -114,7 +114,7 @@ namespace TestApp.SVN
 			    {
 				    foreach (var status in svnStatusList)
 				    {
-					    if (SvnSelectedPath == status.Path && status.LocalNodeStatus == SvnStatus.NotVersioned)
+					    if (SvnSelectedPath == status.Path && status.RemoteContentStatus == SvnStatus.None)
 					    {
 						    return;
 					    }

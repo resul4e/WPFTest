@@ -26,7 +26,8 @@
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
-
+		
+		<!-- Test -->
 		<StackPanel Orientation="Horizontal">
 			<Menu>
 				<MenuItem Header="_File"/>
@@ -36,6 +37,7 @@
 			</Menu>
 		</StackPanel>
 
+		<!-- Left half, Only houses file browser for now -->
 		<TreeView Grid.Row="1" Grid.Column="0" TreeViewItem.Expanded="trvMenuItem_Expanded"
 		          SelectedItemChanged="trvMenu_SelectionChanged" Name="trvMenu">
 			<TreeView.ItemTemplate>
@@ -53,13 +55,14 @@
 			</TreeView.ItemTemplate>
 		</TreeView>
 
+		<!-- Right half, holds log and message viewer -->
 		<Grid Grid.Row="1" Grid.Column="1">
-
 			<Grid.RowDefinitions>
 				<RowDefinition Height="2*"/>
 				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
 
+			<!-- Log -->
 			<ListView Grid.Row="0" MinHeight="150" ItemsSource="{Binding LogDataCollection}" x:Name="ListView"
 			          AlternationCount="2" MouseRightButtonDown="GrVHeader_RightClicked">
 				<ListView.ItemContainerStyle>
@@ -114,6 +117,8 @@
 					</GridView>
 				</ListView.View>
 			</ListView>
+			
+			<!-- Message viewer -->
 			<StackPanel Grid.Row="1">
 				<ScrollViewer MaxHeight="150">
 					<TextBlock Text="{Binding ElementName=ListView, Path=SelectedItem.Message}" TextWrapping="Wrap"/>

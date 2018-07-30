@@ -41,7 +41,7 @@ namespace TestApp
 			SvnLog = new SVNLog();
 
 			InitializeComponent();
-			this.DataContext = SvnLog;
+			DataContext = SvnLog;
 			GoToFileBrowser();
 		}
 

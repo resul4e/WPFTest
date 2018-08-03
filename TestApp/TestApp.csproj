@@ -493,13 +493,14 @@
     <Resource Include="Media\FontAwesome\zoom-out.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Media\Flaticon\checked.png" />
+    <Resource Include="Media\Flaticon\add16x16.png" />
+    <Resource Include="Media\Flaticon\add24x24.png" />
+    <Resource Include="Media\Flaticon\checked16x16.png" />
+    <Resource Include="Media\Flaticon\pencil-edit-button16x16.png" />
+    <Resource Include="Media\Flaticon\question16x16.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Media\Flaticon\pencil-edit-button.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Media\Flaticon\question.png" />
+    <Resource Include="Media\Flaticon\addRed16x16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

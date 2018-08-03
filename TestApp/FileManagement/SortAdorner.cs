@@ -43,8 +43,8 @@ namespace TestApp.FileManagement
 
 			TranslateTransform transform = new TranslateTransform
 			(
-				AdornedElement.RenderSize.Width - 15,
-				(AdornedElement.RenderSize.Height - 5) / 2
+				(AdornedElement.RenderSize.Width / 2.0f) - 3.5f,
+				5
 			);
 			_drawingContext.PushTransform(transform);
 

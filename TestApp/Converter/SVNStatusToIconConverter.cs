@@ -33,19 +33,19 @@ namespace TestApp.Converter
 				case SvnStatus.Conflicted:
 				case SvnStatus.Merged:
 				case SvnStatus.Modified:
-					imageSource = "pack://application:,,,/Media/Flaticon/pencil-edit-button.png";
+					imageSource = "pack://application:,,,/Media/Flaticon/pencil-edit-button16x16.png";
 					break;
 				case SvnStatus.Replaced:
 				case SvnStatus.Deleted:
 					break;
 				case SvnStatus.Added:
-					imageSource = "pack://application:,,,/Media/FontAwesome/add-square-button.png";
+					imageSource = "pack://application:,,,/Media/Flaticon/add16x16.png";
 					break;
 				case SvnStatus.Normal:
-					imageSource = "pack://application:,,,/Media/Flaticon/checked.png";
+					imageSource = "pack://application:,,,/Media/Flaticon/checked16x16.png";
 					break;
 				case SvnStatus.NotVersioned:
-					imageSource = "pack://application:,,,/Media/Flaticon/question.png";
+					imageSource = "pack://application:,,,/Media/Flaticon/question16x16.png";
 					break;
 			}
 

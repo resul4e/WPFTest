@@ -15,31 +15,21 @@
 		<converter:SVNStatusToIconConverter x:Key="SVNStatusToIcon"/>
 	</Page.Resources>
 
-	<Grid>
+	<Grid Margin="2 2 2 2">
 
 		<Grid.RowDefinitions>
-			<RowDefinition Height="20"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*" MinWidth="150"/>
+			<ColumnDefinition Width="5"/>
+			<ColumnDefinition Width="*" MinWidth="150"/>
 		</Grid.ColumnDefinitions>
-		
-		<!-- Test -->
-		<StackPanel Orientation="Horizontal">
-			<Menu>
-				<MenuItem Header="_File"/>
-				<MenuItem Header="_File"/>
-				<MenuItem Header="_File"/>
-				<MenuItem Header="_File"/>
-			</Menu>
-		</StackPanel>
 
 		<!-- Left half, Only houses file browser for now -->
-		<TreeView Grid.Row="1" Grid.Column="0" TreeViewItem.Expanded="trvMenuItem_Expanded"
-		          SelectedItemChanged="trvMenu_SelectionChanged" Name="trvMenu">
+		<TreeView Grid.Row="0" Grid.Column="0" TreeViewItem.Expanded="trvMenuItem_Expanded"
+		          SelectedItemChanged="trvMenu_SelectionChanged" Name="trvMenu" Margin="2 0 0 2">
 			<TreeView.ItemTemplate>
 				<HierarchicalDataTemplate DataType="{x:Type local:FileBrowserData}" ItemsSource="{Binding Items}">
 					<StackPanel Orientation="Horizontal">
@@ -55,11 +45,14 @@
 			</TreeView.ItemTemplate>
 		</TreeView>
 
+		<GridSplitter ResizeDirection="Columns" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="1"/>
+
 		<!-- Right half, holds log and message viewer -->
-		<Grid Grid.Row="1" Grid.Column="1">
+		<Grid Grid.Row="0" Grid.Column="2">
 			<Grid.RowDefinitions>
-				<RowDefinition Height="2*"/>
-				<RowDefinition Height="*"/>
+				<RowDefinition Height="2*" MinHeight="100"/>
+				<RowDefinition Height="5"/>
+				<RowDefinition Height="*" MinHeight="100"/>
 			</Grid.RowDefinitions>
 
 			<!-- Log -->
@@ -83,7 +76,7 @@
 					<GridView>
 						<GridViewColumn>
 							<GridViewColumn.Header>
-								<GridViewColumnHeader Tag="Revision" Click="GrVHeader_Clicked">
+								<GridViewColumnHeader Height="25" Tag="Revision" Click="GrVHeader_Clicked" VerticalContentAlignment="Bottom">
 									Revision
 								</GridViewColumnHeader>
 							</GridViewColumn.Header>
@@ -93,37 +86,39 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
+						<GridViewColumn DisplayMemberBinding="{Binding Time, Converter={StaticResource DateTimeToString}}">
+							<GridViewColumn.Header>
+								<GridViewColumnHeader Height="25" VerticalContentAlignment="Bottom" Tag="Time" Click="GrVHeader_Clicked" Content="Time"/>
+							</GridViewColumn.Header>
+						</GridViewColumn>
 						<GridViewColumn Width="200">
 							<GridViewColumn.Header>
 								<GridViewColumnHeader Tag="Message" 
 								                      Click="GrVHeader_Clicked" 
-								                      Content="Message"/>
+								                      Content="Message"
+								                      Height="25"
+								                      VerticalContentAlignment="Bottom"/>
 							</GridViewColumn.Header>
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<TextBlock MaxWidth="400" 
-											   MinWidth="20" 
+									           MinWidth="20" 
 									           TextWrapping="NoWrap" 
 									           Text="{Binding Message, Converter={StaticResource StringToOneline}}" 
-											   TextTrimming="CharacterEllipsis"/>
+									           TextTrimming="CharacterEllipsis"/>
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
-						<GridViewColumn DisplayMemberBinding="{Binding Time, Converter={StaticResource DateTimeToString}}">
-							<GridViewColumn.Header>
-								<GridViewColumnHeader Tag="Time" Click="GrVHeader_Clicked" Content="Time"/>
-							</GridViewColumn.Header>
 						</GridViewColumn>
 					</GridView>
 				</ListView.View>
 			</ListView>
 			
+			<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ResizeDirection="Rows"/>
+
 			<!-- Message viewer -->
-			<StackPanel Grid.Row="1">
-				<ScrollViewer MaxHeight="150">
-					<TextBlock Text="{Binding ElementName=ListView, Path=SelectedItem.Message}" TextWrapping="Wrap"/>
-				</ScrollViewer>
-			</StackPanel>
+			<ScrollViewer Grid.Row="2">
+				<TextBlock Text="{Binding ElementName=ListView, Path=SelectedItem.Message}" TextWrapping="Wrap"/>
+			</ScrollViewer>
 		</Grid>
 	</Grid>
 </Page>

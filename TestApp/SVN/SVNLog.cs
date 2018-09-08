@@ -114,8 +114,8 @@ namespace TestApp.SVN
 			    {
 				    foreach (var status in svnStatusList)
 				    {
-					    if (SvnSelectedPath == status.Path && status.LocalTextStatus == SvnStatus.None)
-					    {
+					    if (SvnSelectedPath == status.Path && (status.LocalTextStatus == SvnStatus.None || status.LocalContentStatus == SvnStatus.Added))
+						{
 						    return;
 					    }
 					}

@@ -50,7 +50,7 @@ namespace TestApp.FileManagement
 		#region Public Methods
 
 		/// <summary>
-		/// Get a list of all of the directories and files inside of the given path
+		/// Get a list of all of the directories and files inside of the given path.
 		/// </summary>
 		/// <param name="_path">The DirectoryPath you want the content for.</param>
 		/// <returns>A list of MenuItems, if the menuItem is another directory it is filled with a dummy item, otherwise its content remains empty</returns>

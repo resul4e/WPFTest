@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
+using System.Windows.Input;
 using TestApp.FileManagement;
 using TestApp.SVN;
 
@@ -29,6 +33,7 @@ namespace TestApp
 		/// The path to the checkout folder.
 		/// </summary>
 		public string SvnCheckoutPath { get; }
+
 		#endregion
 
 		#region Ctor/Dtor
@@ -47,6 +52,30 @@ namespace TestApp
 
 		#endregion
 
+		#region Event Handlers
+
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			base.OnKeyDown(e);
+
+			if (e.Key == Key.S && (Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != 0)
+			{
+				if (FileBrowser.trvMenu.SelectedItem != null)
+				{
+					var args = "/select, " + ((FileBrowserData)FileBrowser.trvMenu.SelectedItem).Path;
+					Process.Start("Explorer.exe", args);
+				}
+			}
+			else if(e.Key == Key.F1)
+			{
+				if (FileBrowser.trvMenu.SelectedItem != null)
+				{
+					var textDiffPath = Environment.CurrentDirectory + "\\TextDiff.exe";
+					Process.Start(textDiffPath);
+				}
+			}
+		}
+
 		private void RefreshButton_Click(object _sender, RoutedEventArgs _e)
 		{
 			SvnLog.RefreshLog();
@@ -57,10 +86,16 @@ namespace TestApp
 			GoToFileBrowser();
 		}
 
+#endregion
+
+#region Private Methods
+
 		private void GoToFileBrowser()
 		{
 			FileBrowser = new FileBrowser();
 			Content = FileBrowser;
 		}
+
+#endregion
 	}
 }
